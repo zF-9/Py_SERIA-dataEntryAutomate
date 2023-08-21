@@ -17,7 +17,8 @@ print(dataframe)
 
 # Open URL
 ###driver.get('https://docs.google.com/forms/d/e/1FAIpQLSf-F-_UeA8AAxfFN6_yOQgi3rgakm0lZiLTMAGEfqJCfp-2hA/viewform?usp=sf_link')
-driver.get('http://localhost:8000/login')
+#driver.get('http://localhost:8000/login')
+driver.get('https://seria.digitalsabah.gov.my/login')
 
 # wait for one second, until page gets fully loaded
 time.sleep(3)
@@ -25,7 +26,7 @@ time.sleep(3)
 #login creds
 
 no_ic = '880621125761'
-pswd = 'wasd'
+pswd = 'ZF5304*^'
 
 
 ic = driver.find_element("xpath", '//*[@id="input-10"]')
@@ -59,10 +60,13 @@ tambah_perundangan.click()
 
 time.sleep(1)
 
-for data in dataframe:
-    count = 0 
+row_count = range(dataframe.shape[0])
+
+for data in row_count:
+    driver.refresh()
+    #count = 0 
     time.sleep(2)
-    print(data)
+    #print(dataframe.iloc[count])
     #print(data_lawname)
     
     #click to show dropdown
@@ -70,20 +74,57 @@ for data in dataframe:
     dropMenu.click()
 
     #fill in the field 
-    org_berkaitan = driver.find_element("xpath", '//*[@id="input-159"]')
+    org_berkaitan = driver.find_element("xpath", '//*[@id="input-37"]') 
+    orgs_ = dataframe['AGENCY'].iloc[data]
+    print(orgs_)
+    org_berkaitan.send_keys(orgs_)
     #org_berkaitan.send_keys('Jabatan Arkib Negeri Sabah')
     #org_berkaitan.send_keys(data_agensi)
+    selectClick = driver.find_element("xpath", '/html/body/div/div[2]/div/div/div/div')
+    selectClick.click()
 
-    law_name = driver.find_element("xpath", '//*[@id="input-164"]') 
+    law_name = driver.find_element("xpath", '//*[@id="input-42"]')
+    laws_ = dataframe['Ordinance'].iloc[data]
+    print(laws_)
+    law_name.send_keys(laws_)
     #contoh_perundangan = 'testing akta 1994'
     #law_name.send_keys(contoh_perundangan)
     #law_name.send_keys(data_agensi)
 
-    count +1
+    #count +1
 
     #refresh webdiriver
     #driver.refresh()
-    #time.sleep(2)
+    time.sleep(2)
+
+    #click simpan button
+    insert = driver.find_element("xpath", '/html/body/div/div[1]/main/div/div/div/div[2]/div/div/div/form/div[2]/div/button')
+    insert.click()
+    time.sleep(3)
+    
+
+    #errMsgs_ = driver.find_element("xpath", '/html/body/div/div[1]/main/div/div/div/div[3]/div/div/div/form/div[1]/div/div[3]/div/div/div/div[2]/div/div/div')
+    #succMsgs_ = driver.find_element("xpath", '/html/body/div/div[1]/main/div/div/div/div[2]/div/div')
+
+    # whatNotPunyaMessage_example = driver.find_element("xpath", "//*[contains(text(),'someUniqueString')]") 
+    
+    if driver.find_element("xpath", '/html/body/div/div[1]/main/div/div/div/div[2]/div/div') == "Maklumat berjaya disimpan" : #succMsgs_ == 'Maklumat berjaya disimpan' :
+        print('New entry added!')
+        time.sleep(2)
+        driver.refresh()
+        
+
+    elif driver.find_element("xpath", '/html/body/div/div[1]/main/div/div/div/div[2]/div/div') == "Sila semak semula maklumat anda" :
+        print('Nothing new was added!')
+        time.sleep(2)
+        driver.refresh()
+
+    else:
+        time.sleep(2)
+        driver.refresh()
+        
+
+    
 
 
 
